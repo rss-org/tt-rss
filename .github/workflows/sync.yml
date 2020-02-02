@@ -1,0 +1,31 @@
+# GIT_EMAIL	
+# GIT_NAME	
+# THE_GITHUB_TOKEN	
+# THE_LOCAL_BRANCH	
+# THE_LOCAL_REF	
+# THE_ORIGIN_BRANCH	
+# THE_ORIGIN_REF
+
+
+name: 'Sync Action'
+
+on:
+  push:
+    branches:    
+      - sync
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: clone_origin_src
+      run: |
+        git clone -b ${{ secrets.THE_ORIGIN_BRANCH }} https://${{ secrets.THE_ORIGIN_REF }} sync_temp
+
+    - name: push_local_src
+      run: |
+        cd sync_temp
+        git config --local user.name "${{ secrets.GIT_NAME }}"
+        git config --local user.email "${{ secrets.GIT_EMAIL }}"
+        git push --force "https://${{ secrets.THE_GITHUB_TOKEN }}@${{ secrets.THE_LOCAL_REF }}"  master:${{ secrets.THE_LOCAL_BRANCH }}
